@@ -1,0 +1,25 @@
+---
+label: New Documentation Page
+hide_body: false
+display_field: title
+fields:
+- type: text
+  name: title
+  label: title
+  default: _index.en
+- type: number
+  name: weight
+  label: weight
+- type: list
+  name: keywords
+  label: keywords
+pages:
+- content/data-preparation/format/_index.en.md
+- content/data-preparation/metadata/_index.en.md
+- content/data-preparation/upload/_index.en.md
+- content/databases/depression-inpatients/_index.en.md
+- content/databases/suicide/_index.en.md
+- content/general/components/_index.en.md
+- content/general/contribute/_index.en.md
+- content/r-packages/api/_index.en.md
+- content/r-packages/r-packages/_index.en.md

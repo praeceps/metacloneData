@@ -1,0 +1,29 @@
+<span id="references-box">
+  <button
+    type="button"
+    class="btn btn-default dropdown-toggle expand-btn"
+    data-toggle="collapse"
+    href="#collapseReferences"
+    role="button"
+    aria-expanded="false"
+  >
+    Show References<span class="caret"></span>
+  </button>
+  <div class="collapse" id="collapseReferences">
+    <div class="card card-body">
+      <span id="ph-references"></span>
+      <span id="spinner-ph-references" class="loader-spinner" style="margin-left: 5px;"></span>
+      <style>
+        #spinner-ph-references { width: 20px; height: 20px; margin-bottom: 5px; padding-bottom: 5px; border: 2px solid rgb(133, 133, 133);
+          border-bottom-color: transparent; border-radius: 50%; display: inline-block;
+          box-sizing: border-box; animation: rotation 1s linear infinite;}
+          @keyframes rotation {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}} 
+      </style>
+    </div>
+  </div>
+  <br />
+</span>
+
+<script defer>
+var randID=makeid(10);async function renderReferences(){for(;!isDataSaved();)await new Promise(e=>setTimeout(e,1e3));var e=JSON.parse(sessionStorage.getItem("apiResponse")),t=!0;for(let r=0;r<e.length;r++){var n=e[r].conceptdoi?.toString()||"";if((n=JSON.stringify(n))===JSON.stringify("{{.Get `doi`}}")&&!0===t){var i,s=e[r].metadata.related_identifiers[0].identifier;fetch("https://raw.githubusercontent.com/metapsy-project/"+s.split("/")[4]+"/"+s.split("/")[6]+"/metadata/references.json").then(e=>e.text()).then(e=>{var t=Object.keys(e=JSON.parse(e)),r=" <div style='background-color: var(--body-color); padding: 20px 20px 20px 20px;overflow-y: scroll; height:300px;'><ul style='font-size: 90% !important;'>";for(let n=0;n<t.length;n++)r+="<li><strong>"+String(t[n])+":</strong> "+String(e[t[n]])+"</li>";r+="</ul></div>",document.getElementById("spinner-ph-references").style.display="none";var i=document.getElementById("ph-references");i.id=randID,i.innerHTML=r}),t=!1}}}renderReferences();
+</script>

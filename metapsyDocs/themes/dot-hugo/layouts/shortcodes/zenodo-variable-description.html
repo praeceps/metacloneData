@@ -1,0 +1,31 @@
+<span id="variable-description-box">
+  <button
+    type="button"
+    class="btn btn-default dropdown-toggle expand-btn"
+    data-toggle="collapse"
+    href="#collapseVariableDescription"
+    role="button"
+    aria-expanded="false"
+  >
+    Show Variable Description<span class="caret"></span>
+  </button>
+  <div class="collapse" id="collapseVariableDescription">
+    <div class="card card-body" style="padding: 0.15rem !important">
+      <div style="overflow-y: scroll; height: 300px">
+        <span id="ph-variable-description"></span>
+        <span id="spinner-ph-variable-description" class="loader-spinner"></span>
+        <style>
+         #spinner-ph-variable-description { width: 20px; height: 20px; padding-bottom: 10px; border: 2px solid rgb(133, 133, 133);
+            border-bottom-color: transparent; border-radius: 50%; display: inline-block;
+            box-sizing: border-box; animation: rotation 1s linear infinite;}
+            @keyframes rotation {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}} 
+        </style>
+      </div>
+    </div>
+  </div>
+  <br />
+</span>
+
+<script defer>
+var randID=makeid(10);async function renderVariableDescription(){for(;!isDataSaved();)await new Promise(e=>setTimeout(e,1e3));var e=JSON.parse(sessionStorage.getItem("apiResponse")),t=!0;for(let i=0;i<e.length;i++){var n=e[i].conceptdoi?.toString()||"";if((n=JSON.stringify(n))===JSON.stringify("{{.Get `doi`}}")&&!0===t){var r,a=e[i].metadata.related_identifiers[0].identifier;fetch("https://raw.githubusercontent.com/metapsy-project/"+a.split("/")[4]+"/"+a.split("/")[6]+"/metadata/variable_description.json").then(e=>e.text()).then(e=>{document.getElementById("spinner-ph-variable-description").style.display="none";var t=document.getElementById("ph-variable-description");t.id=t.id+"-"+randID;var i=Object.keys(tableData=JSON.parse(e)),n=Object.values(tableData),r=document.createElement("table"),a=r.insertRow(-1),s=document.createElement("th");s.innerHTML="Variable";var l=document.createElement("th");l.innerHTML="Description",a.appendChild(s),a.appendChild(l);for(var d=0;d<i.length;d++)(a=r.insertRow(-1)).insertCell(-1).innerHTML="<code>"+i[d]+"</code>",a.insertCell(-1).innerHTML=n[d];r.style.fontSize="90%",t.appendChild(r)}),t=!1}}}renderVariableDescription();
+</script>

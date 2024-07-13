@@ -1,0 +1,13 @@
+<span id="ph-last-search"></span>
+
+<span id="spinner-ph-last-search" class="loader-spinner"></span>
+<style>
+.loader-spinner { width: 20px; height: 20px; margin-bottom: -5px; border: 2px solid rgb(133, 133, 133);
+    border-bottom-color: transparent; border-radius: 50%; display: inline-block;
+    box-sizing: border-box; animation: rotation 1s linear infinite;}
+    @keyframes rotation {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}} 
+</style>
+
+<script defer>
+var randID=makeid(10);async function renderLastSearch(){for(;!isDataSaved();)await new Promise(e=>setTimeout(e,1e3));var e=JSON.parse(sessionStorage.getItem("apiResponse")),t=!0;for(let a=0;a<e.length;a++){var r=e[a].conceptdoi?.toString()||"";if((r=JSON.stringify(r))===JSON.stringify("{{.Get `doi`}}")&&!0===t){var n,i=e[a].metadata.related_identifiers[0].identifier;fetch("https://raw.githubusercontent.com/metapsy-project/"+i.split("/")[4]+"/"+i.split("/")[6]+"/metadata/last_search.txt").then(e=>e.text()).then(e=>{let t=["January","February","March","April","May","June","July","August","September","October","November","December",];(e=new String(e)).length>10&&(e=e.substring(0,10));let a=new Date(e),r=t[a.getMonth()],n=a.getFullYear(),i=a.getDate();modDate=document.createTextNode(r+" "+i+", "+n),document.getElementById("spinner-ph-last-search").style.display="none";var s=document.getElementById("ph-last-search");s.id=s.id+"-"+randID,s.appendChild(modDate)}),t=!1}}}renderLastSearch();
+</script>

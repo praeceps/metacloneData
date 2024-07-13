@@ -1,0 +1,13 @@
+<span id="ph-authors"></span>
+
+<span id="spinner-ph-authors" class="loader-spinner spinner-ph-authors"></span>
+<style>
+.loader-spinner { width: 20px; height: 20px; margin-bottom: -5px; border: 2px solid rgb(133, 133, 133);
+    border-bottom-color: transparent; border-radius: 50%; display: inline-block;
+    box-sizing: border-box; animation: rotation 1s linear infinite;}
+    @keyframes rotation {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}} 
+</style>
+
+<script defer>
+var randID=makeid(10);async function renderAuthors(){for(;!isDataSaved();)await new Promise(t=>setTimeout(t,1e3));var t=JSON.parse(sessionStorage.getItem("apiResponse")),e=!0;for(let r=0;r<t.length;r++){var n=t[r].conceptdoi?.toString()||"";if((n=JSON.stringify(n))===JSON.stringify("{{.Get `doi`}}")&&!0===e){var a,i=t[r].metadata.related_identifiers[0].identifier;fetch("https://raw.githubusercontent.com/metapsy-project/"+i.split("/")[4]+"/"+i.split("/")[6]+"/metadata/authors.json").then(t=>t.text()).then(t=>{t=JSON.parse(t),text="";for(let e=0;e<t.length;e++)text=text+t[e].name+' <a target="_blank" href="https://orcid.org/'+t[e].orcid+'"><img style="display: inline-block !important" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"/></a>, ';text=text.slice(0,-2);for(let r=0;r<document.getElementsByClassName("spinner-ph-authors").length;r++)document.getElementsByClassName("spinner-ph-authors")[r].style.display="none";var n=document.getElementById("ph-authors");n.id=n.id+"-"+randID,n.innerHTML=text}),e=!1}}}renderAuthors();
+</script>

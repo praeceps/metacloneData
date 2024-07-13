@@ -1,0 +1,13 @@
+<span id="ph-registration"></span>
+
+<span id="spinner-ph-registration" class="loader-spinner"></span>
+<style>
+.loader-spinner { width: 20px; height: 20px; margin-bottom: -5px; border: 2px solid rgb(133, 133, 133);
+    border-bottom-color: transparent; border-radius: 50%; display: inline-block;
+    box-sizing: border-box; animation: rotation 1s linear infinite;}
+    @keyframes rotation {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}} 
+</style>
+
+<script defer>
+var randID=makeid(10);async function renderRegistration(){for(;!isDataSaved();)await new Promise(t=>setTimeout(t,1e3));var t=JSON.parse(sessionStorage.getItem("apiResponse")),e=!0;for(let r=0;r<t.length;r++){var i=t[r].conceptdoi?.toString()||"";if((i=JSON.stringify(i))===JSON.stringify("{{.Get `doi`}}")&&!0===e){var n,a=t[r].metadata.related_identifiers[0].identifier;fetch("https://raw.githubusercontent.com/metapsy-project/"+a.split("/")[4]+"/"+a.split("/")[6]+"/metadata/registration.txt").then(t=>t.text()).then(t=>{var e=t,r=document.createElement("a");r.innerText="{{.Get `text`}}",r.setAttribute("href",e),r.setAttribute("target","blank"),document.getElementById("spinner-ph-registration").style.display="none";var i=document.getElementById("ph-registration");i.id=i.id+"-"+randID,i.appendChild(r)}),e=!1}}}renderRegistration();
+</script>

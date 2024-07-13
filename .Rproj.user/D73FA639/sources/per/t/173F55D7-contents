@@ -1,0 +1,137 @@
+### Lecture week 5 Intro MA Part 2
+### UCM SKI3011
+### Maurice Zeegers, met dank aan: Sander van Kuijk & Colinda Simons (part 2)
+### December 28, 2023
+
+# Before we start, let's clean any mess we may have. To remove all objects that
+# are in the global environment:
+ls()
+rm(list = ls())
+
+##Install packages
+#install.packages("metafor")
+#install.packages("meta")
+#install.packages("metadat")
+#install.packages("?readxl")
+library(metafor)
+library(meta)
+library(metadat)
+library(readxl) #to import excel files
+library(dplyr) #for data manipulation functions, such as "select"
+
+##FIND AN INTERESTING EXAMPLE DATASET
+#datsearch() #type "l", "odds ratios" 
+datsearch() "l", odds ratios"
+
+##PART 1 STREPTOKINASE METAANALYSIS
+
+# copy data into 'dat' and examine data
+
+dat.lau1992
+dat <- dat.lau1992
+View(dat.lau1992)
+  
+### meta-analysis of log odds ratios using the MH method
+?rma
+res <- rma.mh(measure="OR", ai=ai, n1i=n1i, ci=ci, n2i=n2i, data=dat, slab=trial)
+print(res, digits=2)
+
+### forest plot
+?forest #also see e.g. https://www.rdocumentation.org/packages/metafor/versions/3.8-1/topics/forest.rma
+forest(res, xlim=c(-10,9), atransf=exp, at=log(c(.01, 0.1, 1, 10, 100)),
+       header=TRUE, top=2, ilab=dat$year, ilab.xpos=-6)
+text(-6, 35, "Year", font=2) #note: this is a separate command
+
+### cumulative meta-analysis
+sav <- cumul(res)
+
+### forest plot of the cumulative results
+forest(sav, xlim=c(-5,4), atransf=exp, at=log(c(0.1, 0.5, 1, 2, 10)),
+       header=TRUE, top=2, ilab=dat$year, ilab.xpos=-3)
+text(-3, 35, "Year", font=2)
+id <- c(4, 8, 15, 33) # rows for which the z/p-values should be shown (as in Lau et al., 1992)
+text(1.1, (res$k:1)[id], paste0("z = ", formatC(sav$zval[id], format="f", digits=2),
+                                ", p = ", formatC(sav$pval[id], format="f", digits=4)))
+
+##PART 2 COMPLICATIONS METAANALYSIS
+rm(list = ls())
+
+getwd()
+setwd("C:/Users/headf/OneDrive/Documents/rStudioWD")
+# Make the study-level data available for the outcome variable "complications".
+
+dat <- read.csv("complications.csv", header = TRUE, sep = ";")
+
+# Again, start by inspecting the data first.
+
+head(dat, 1)
+names(dat)
+length(dat$Author)
+View(dat)
+
+# Meta analysis for binary outcomes: metabin()
+
+?metabin
+
+res_bin <- metabin(event.e = Complicationstlif, n.e = Ntlif,
+                   event.c = Complicationsplif, n.c = Nplif,
+                   sm = "OR", data = dat,
+                   studlab = paste(Author, "et al.", Year),
+                   incr = 0.5)
+summary(res_bin)
+
+forest(res_bin) 
+
+jpeg("forest_plot_bin.jpg", width = 900, height = 400, pointsize = 12)
+forest(res_bin, sortvar = dat$Year,  
+       random = FALSE, print.tau2 = FALSE, print.pval.Q = FALSE,
+       digits.se = 2)
+dev.off()
+
+
+##PART 3 BLADDER CANCER METAANALYSIS
+rm(list = ls())
+
+# In case only measures of association are available, we can still perform a
+# meta-analysis. Consider a dataset from studies that estimated the association
+# between exposure to environmental tobacco smoke (ets) and bladder cancer.
+
+dat <- read.csv("bladder cancer.csv", header = TRUE, sep = ";")
+View(dat)
+
+class(dat$orets_adult)
+dat$orets_adult
+
+dat <- read.csv("bladder cancer.csv", header = TRUE, sep = ";", dec = ".")
+View(dat)
+
+# First, we need to log-transform the odds ratios and 95% confidence intervals
+# for the overall effects.
+dat$log_orets_adult     <- log(dat$orets_adult)
+dat$log_orets_lcl_adult <- log(dat$orets_lcl_adult)
+dat$log_orets_ucl_adult <- log(dat$orets_ucl_adult)
+
+# Now calculate the standard error of the log odds ratio:
+dat$se_log_or <- (dat$log_orets_ucl_adult - dat$log_orets_adult)/1.96
+# For the first analysis, we'll confine the data to the results from exposure in
+# the home setting.
+dat_h <- subset(dat, dat$Location == "house")
+# And perform the meta-analysis:
+res_h <- metagen(TE = log_orets_adult, seTE = se_log_or,
+                 studlab = paste(firstauthor, "et al.", year), data = dat_h)
+summary(res_h)
+forest(res_h)
+
+res_h2 <- metagen(TE = log_orets_adult, seTE = se_log_or,
+                  studlab = paste(firstauthor, "et al.", year), data = dat_h,
+                  sm = "OR")
+forest(res_h2)
+
+# If we are interested to know if there is a difference in effect estimate
+# between house and work, we can stratify the results by location:
+
+res2 <- metagen(TE = log_orets_adult, seTE = se_log_or,
+                studlab = paste(firstauthor, "et al.", year), data = dat,
+                sm = "OR", subgroup = Location)
+forest(res2)
+
